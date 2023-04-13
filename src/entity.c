@@ -16,8 +16,8 @@ Entity* create_entity(SDL_Texture* texture, int x, int y, float speed, int healt
     SDL_QueryTexture(texture, NULL, NULL, &w, &h);
 
     *entity = (Entity){
-        texture,                
-        w, h,        
+        texture,
+        w, h,
         { (float)x, (float)y }, //pos
         { 0.0f, 0.0f },         //vel
         speed,
@@ -67,14 +67,14 @@ SDL_Rect get_entity_rect(Entity* entity)
     return entity_rect;
 }
 
-bool check_entity_collision(Entity* e1, Entity* e2)
-{
-    return collision(get_entity_rect(e1), get_entity_rect(e2));
-}
-
 Vector2 get_entity_center(Entity* entity)
 {
     return get_rect_center(get_entity_rect(entity));
+}
+
+bool check_entity_collision(Entity* e1, Entity* e2)
+{
+    return collision(get_entity_rect(e1), get_entity_rect(e2));
 }
 
 void print_entity(Entity* entity)
@@ -89,3 +89,39 @@ void print_entity(Entity* entity)
     }
 }
 
+Entity_list create_entity_list()
+{
+    Entity_list entity_list;
+
+    entity_list.head = (Entity*)malloc(sizeof(Entity));
+    if (!entity_list.head) {
+        printf("Insufficient memory");
+		exit(1);
+    }
+
+    entity_list.head->next = NULL;
+    entity_list.tail = entity_list.head;
+
+    return entity_list;
+}
+
+void add_entity_to_list(Entity_list* entity_list, Entity* new_entity)
+{
+    entity_list->tail->next = new_entity;
+    entity_list->tail = new_entity;
+}
+
+void remove_entity_from_list(Entity_list* entity_list, Entity** current, Entity** prev)
+{
+    if (*current == entity_list->tail) {
+       entity_list->tail = *prev;
+    }
+
+    (*prev)->next = (*current)->next;
+    destroy_entity(current);
+    *current = *prev;
+}
+
+void destroy_entity_list(Entity_list* entity_list){
+
+}

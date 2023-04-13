@@ -36,8 +36,6 @@ Vector2 add_vec(Vector2 p1, Vector2 p2)
 	return p3;
 }
 
-
-
 void draw_vector(Vector2 p1, Vector2 p2)
 {
 	SDL_SetRenderDrawColor(g_renderer, 0x00, 0xFF, 0xFF, 255);

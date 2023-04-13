@@ -17,7 +17,6 @@ Uint64 frame_time = 0;
 
 int rand_range(int min, int max)
 {
-	//srand(2);
 	return min + rand() % (max - min + 1);
 }
 

@@ -92,7 +92,7 @@ void check_bullet_collision(Entity* b)
 	Entity* e;
 
 	if (b->side == PLAYER_SIDE) {
-		for (e = enemy_head->next; e != NULL; e = e->next)
+		for (e = enemy_list.head->next; e != NULL; e = e->next)
 		{
 			if (check_entity_collision(b, e))
 			{
@@ -106,7 +106,7 @@ void check_bullet_collision(Entity* b)
 		if (check_entity_collision(b, player))
 		{
 			b->health = 0;
-			//player->health -= 1;
+			player->health += 1;
 		}
 	}
 }

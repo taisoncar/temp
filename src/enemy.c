@@ -10,20 +10,15 @@
 #define ENEMY_SPEED 100.0f
 #define ENEMY_RELOAD 60
 
-Entity* enemy_head = NULL;
-Entity* enemy_tail = NULL;
+/* Entity* enemy_head = NULL;
+Entity* enemy_tail = NULL; */
+Entity_list enemy_list;
 
 void spawn_enemy();
 
 void init_enemy()
 {
-	enemy_head = (Entity*)malloc(sizeof(Entity));
-	if (enemy_head == NULL) {
-		printf("Insufficient memory");
-		exit(1);
-	}
-	enemy_head->next = NULL;
-	enemy_tail = enemy_head;
+	enemy_list = create_entity_list();
 }
 
 void spawn_enemy()
@@ -34,11 +29,9 @@ void spawn_enemy()
 	new_enemy->w /= 2;
 	new_enemy->h /= 2;
 	new_enemy->pos.x = rand_range(0, SCREEN_WIDTH - new_enemy->w);
-	//new_enemy->pos.x = (SCREEN_WIDTH / 2) - (new_enemy->rect.w / 2);
 	new_enemy->vel.y += 1;
 
-	enemy_tail->next = new_enemy;
-	enemy_tail = enemy_tail->next;
+	add_entity_to_list(&enemy_list, new_enemy);
 }
 
 void update_enemies(double delta_time)
@@ -49,31 +42,25 @@ void update_enemies(double delta_time)
 		cooldown = 100;
 	}
 
-	Entity* b;
+	Entity* current;
 	Entity* prev;
 
-	prev = enemy_head;
+	prev = enemy_list.head;
 
-	for (b = enemy_head->next; b != NULL; b = b->next) {
-		update_entity(b, delta_time);
+	for (current = enemy_list.head->next; current != NULL; current = current->next) {
+		update_entity(current, delta_time);
 		
 		//Fire bullet if not reloading
-		if ((b->countdown-- <= 0) && player) {
-			fire_bullet(b);
-			b->countdown = ENEMY_RELOAD;
+		if ((current->countdown-- <= 0) && player) {
+			fire_bullet(current);
+			current->countdown = ENEMY_RELOAD;
 		}
 
 		//Delete enemy if out of bound / killed
-		if ( (b->pos.y > SCREEN_HEIGHT) || (b->health == 0) ) {
-			if (b == enemy_tail) {
-				enemy_tail = prev;
-			}
-
-			prev->next = b->next;
-			destroy_entity(&b);
-			b = prev;
+		if ( (current->pos.y > SCREEN_HEIGHT) || (current->health == 0) ) {
+			remove_entity_from_list(&enemy_list, &current, &prev);
 		}
-		prev = b;
+		prev = current;
 	}
 }
 
@@ -81,7 +68,7 @@ void render_enemies()
 {
 	Entity* b;
 
-	for (b = enemy_head->next; b != NULL; b = b->next) {
+	for (b = enemy_list.head->next; b != NULL; b = b->next) {
 		draw_entity(b);
 		draw_rect(get_entity_rect(b));
 	}
