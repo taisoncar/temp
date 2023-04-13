@@ -122,6 +122,19 @@ void remove_entity_from_list(Entity_list* entity_list, Entity** current, Entity*
     *current = *prev;
 }
 
-void destroy_entity_list(Entity_list* entity_list){
+void draw_entity_list(Entity_list entity_list)
+{
+	for (Entity* current = entity_list.head->next; current != NULL; current = current->next) {
+		draw_entity(current);
+		draw_rect(get_entity_rect(current));
+	}
+}
 
+void destroy_entity_list(Entity_list* entity_list)
+{
+    Entity* prev = entity_list->head;
+    for (Entity* current = entity_list->head->next; current != NULL; current = current->next) {
+        remove_entity_from_list(entity_list, &current, &prev);
+        prev = current;
+    }
 }

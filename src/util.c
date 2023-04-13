@@ -40,23 +40,18 @@ void draw_rect(SDL_Rect rect)
 	SDL_RenderDrawRect(g_renderer, &rect);
 }
 
-
-
 void calc_fps()
 {
 	static Uint64 frame_times[TOTAL_SAMPLES];
 
 	static Uint64 prev_ticks = 0;
-	Uint64 current_ticks = SDL_GetTicks64();
 	static Uint64 current_frame = 0;
 
-	frame_time = current_ticks - prev_ticks;
-	frame_times[current_frame++ % TOTAL_SAMPLES] = frame_time;
-
-	prev_ticks = current_ticks;
+	frame_time = SDL_GetTicks64() - prev_ticks;
+	frame_times[current_frame % TOTAL_SAMPLES] = frame_time;
 
 	int frame_count;
-	if (current_frame < TOTAL_SAMPLES) {
+	if (++current_frame < TOTAL_SAMPLES) {
 		frame_count = current_frame;
 	}
 	else {
@@ -72,6 +67,7 @@ void calc_fps()
 	if (average_frame_time > 0) {
 		average_fps = 1000.0f / average_frame_time;
 	}
+	prev_ticks = SDL_GetTicks64();
 }
 
 void limit_fps()

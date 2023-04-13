@@ -55,7 +55,6 @@ void close_SDL()
 {
     //Messages
     
-
     //Entities
 
     //Font

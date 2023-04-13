@@ -3,7 +3,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 
-#define SCREEN_WIDTH 700
+#define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 1000
 
 enum Texture_list {

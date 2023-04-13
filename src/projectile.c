@@ -8,19 +8,12 @@
 
 #define BULLET_SPEED 500.0f
 
-Entity* bullet_head = NULL;
-Entity* bullet_tail = NULL;
+Entity_list bullet_list;
 int score = 0;
 
 void init_bullet()
 {
-	bullet_head = (Entity*)malloc(sizeof(Entity));
-	if (bullet_head == NULL) {
-		printf("Insufficient memory");
-		exit(1);
-	}
-	bullet_head->next = NULL;
-	bullet_tail = bullet_head;
+	bullet_list = create_entity_list();
 }
 
 void fire_bullet(Entity* entity)
@@ -38,11 +31,9 @@ void fire_bullet(Entity* entity)
 		new_bullet->pos.x += (entity->w / 2) - (new_bullet->w / 2);
 		new_bullet->pos.y += entity->h;
 		new_bullet->vel = calc_slope(get_entity_center(new_bullet), get_entity_center(player));
-		//normalize_vector(&new_bullet->vel);
 	}
 
-	bullet_tail->next = new_bullet;
-	bullet_tail = bullet_tail->next;
+	add_entity_to_list(&bullet_list, new_bullet);
 }
 
 void update_bullets(double delta_time)
@@ -51,28 +42,19 @@ void update_bullets(double delta_time)
 		fire_bullet(player);
 		player->countdown = PLAYER_RELOAD;
 	}
-	Entity* b;
+	Entity* current;
 	Entity* prev;
 
-	prev = bullet_head;
+	prev = bullet_list.head;
 
-	for (b = bullet_head->next; b != NULL; b = b->next) {
-		// if (b->side == ENEMY_SIDE) {
-		// 	b->vel = calc_slope(get_entity_center(b), get_entity_center(player));
-		// }
-		update_entity(b, delta_time);
-		check_bullet_collision(b);
+	for (current = bullet_list.head->next; current != NULL; current = current->next) {
+		update_entity(current, delta_time);
+		check_bullet_collision(current);
 
-		if ( (b->pos.y < 0) || (b->health == 0) || (b->countdown-- <= 0) ){
-			if (b == bullet_tail) {
-				bullet_tail = prev;
-			}
-
-			prev->next = b->next;
-			destroy_entity(&b);
-			b = prev;
+		if ( (current->pos.y < 0) || (current->health == 0) || (current->countdown-- <= 0) ){
+			remove_entity_from_list(&bullet_list, &current, &prev);
 		}
-		prev = b;
+		prev = current;
 	}
 }
 
@@ -80,19 +62,16 @@ void render_bullets()
 {
 	Entity* b;
 
-	for (b = bullet_head->next; b != NULL; b = b->next) {
+	for (b = bullet_list.head->next; b != NULL; b = b->next) {
 		draw_entity(b);
 		draw_rect(get_entity_rect(b));
-		//draw_vector(get_entity_center(b), add_vec(b->pos, b->vel));
 	}
 }
 
 void check_bullet_collision(Entity* b)
 {
-	Entity* e;
-
 	if (b->side == PLAYER_SIDE) {
-		for (e = enemy_list.head->next; e != NULL; e = e->next)
+		for (Entity* e = enemy_list.head->next; e != NULL; e = e->next)
 		{
 			if (check_entity_collision(b, e))
 			{

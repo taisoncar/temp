@@ -4,8 +4,7 @@
 #include "entity.h"
 #include "util.h"
 
-extern Entity* bullet_head;
-extern Entity* bullet_tail;
+extern Entity_list bullet_list;
 extern bool is_fire;
 
 void init_bullet();

@@ -10,8 +10,6 @@
 #define ENEMY_SPEED 100.0f
 #define ENEMY_RELOAD 60
 
-/* Entity* enemy_head = NULL;
-Entity* enemy_tail = NULL; */
 Entity_list enemy_list;
 
 void spawn_enemy();

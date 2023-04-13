@@ -3,8 +3,6 @@
 #include <SDL.h>
 #include "entity.h"
 
-/* extern Entity* enemy_head;
-extern Entity* enemy_tail; */
 extern Entity_list enemy_list;
 
 void init_enemy();

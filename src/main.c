@@ -27,8 +27,8 @@ int main(int argc, char* argv[])
 		update(frame_time / 1000.0f);
 		draw();
 
-		calc_fps();
 		limit_fps();
+		calc_fps();
 	}
 
 	return 0;

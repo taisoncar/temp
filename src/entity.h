@@ -4,6 +4,12 @@
 #include "util.h"
 
 typedef enum {
+	PLAYER_ID,
+	ENEMY_ID,
+	BULLET_ID
+} Entity_ID;
+
+typedef enum {
 	PLAYER_SIDE,
 	ENEMY_SIDE
 } Side;
@@ -41,4 +47,5 @@ void print_entity(Entity* entity);
 Entity_list create_entity_list();
 void add_entity_to_list(Entity_list *entity_list, Entity *new_entity);
 void remove_entity_from_list(Entity_list *entity_list, Entity **current, Entity **prev);
+void draw_entity_list(Entity_list entity_list);
 void destroy_entity_list(Entity_list *entity_list);
