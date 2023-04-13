@@ -58,7 +58,7 @@ void update_bullets(double delta_time)
 	}
 }
 
-void render_bullets()
+void draw_bullets()
 {
 	Entity* b;
 

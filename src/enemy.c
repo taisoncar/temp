@@ -62,7 +62,7 @@ void update_enemies(double delta_time)
 	}
 }
 
-void render_enemies()
+void draw_enemies()
 {
 	Entity* b;
 

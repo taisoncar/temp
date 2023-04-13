@@ -63,13 +63,10 @@ void draw()
 	SDL_SetRenderDrawColor(g_renderer, 0x00, 0x00, 0x00, 255);
 	SDL_RenderClear(g_renderer);
 	//////////////////////////
-
-	draw_entity(player);
-	if (player) {
-		draw_rect(get_entity_rect(player));
-	}
-	render_bullets();
-	render_enemies();
+	
+	draw_bullets();
+	draw_enemies();
+	draw_player();
 	draw_messages();
 
 	///////////////////////////

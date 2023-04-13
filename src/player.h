@@ -9,3 +9,4 @@ extern int score;
 
 void create_player();
 void update_player(double delta_time);
+void draw_player();

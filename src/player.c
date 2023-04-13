@@ -7,6 +7,7 @@
 
 Entity* player = NULL;
 
+
 void kill_player();
 
 void create_player()
@@ -34,6 +35,14 @@ void update_player(double delta_time)
             player->pos.y = 0;
         }
     }
+}
+
+void draw_player()
+{
+	if (player) {
+        draw_entity(player);
+		draw_rect(get_entity_rect(player));
+	}
 }
 
 void kill_player()

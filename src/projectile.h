@@ -10,6 +10,6 @@ extern bool is_fire;
 void init_bullet();
 void fire_bullet(Entity* entity);
 void update_bullets(double delta_time);
-void render_bullets();
+void draw_bullets();
 void check_bullet_collision(Entity* b);
 
