@@ -9,65 +9,64 @@
 
 #define ENEMY_SPEED 100.0f
 #define ENEMY_RELOAD 60
+#define ENEMY_HEALTH 1
 
 Entity_list enemy_list;
 
-void spawn_enemy();
-
-void init_enemy()
-{
-	enemy_list = create_entity_list();
-}
+void update_enemy(Entity* enemy, double delta_time);
+void draw_enemy(Entity* enemy);
 
 void spawn_enemy()
 {
-	Entity* new_enemy;
+	Entity* new_enemy = create_entity();
+	init_enemy(new_enemy);
+	add_entity_to_list(new_enemy, &enemy_list);
+}
 
-	new_enemy = create_entity(g_texture[T_ENEMY], 0, 0, ENEMY_SPEED, 1, ENEMY_SIDE);
-	new_enemy->w /= 2;
-	new_enemy->h /= 2;
-	new_enemy->pos.x = rand_range(0, SCREEN_WIDTH - new_enemy->w);
-	new_enemy->vel.y += 1;
+void init_enemy(Entity* enemy)
+{
+	enemy->id = ENEMY_ID;
+	enemy->texture = g_texture[T_ENEMY];
 
-	add_entity_to_list(&enemy_list, new_enemy);
+    SDL_QueryTexture(enemy->texture, NULL, NULL, &enemy->w, &enemy->h);
+    enemy->w /= 2;
+    enemy->h /= 2;
+
+    enemy->pos.x = rand_range(0, SCREEN_WIDTH - enemy->w);
+    enemy->pos.y = 0;
+
+    enemy->vel.x = 0.0f;
+    enemy->vel.y = 1.0f;
+    enemy->speed = ENEMY_SPEED;
+
+    enemy->health = ENEMY_HEALTH;
+    enemy->side = ENEMY_SIDE;
+    enemy->countdown = 0;
 }
 
 void update_enemies(double delta_time)
 {
-	static int cooldown = 0;
-	if (cooldown-- <= 0) {
-		spawn_enemy();
-		cooldown = 100;
-	}
-
-	Entity* current;
-	Entity* prev;
-
-	prev = enemy_list.head;
-
-	for (current = enemy_list.head->next; current != NULL; current = current->next) {
-		update_entity(current, delta_time);
+	for (Entity* i = enemy_list.head->next; i != NULL; i = i->next) {
+		update_entity(i, delta_time);
 		
 		//Fire bullet if not reloading
-		if ((current->countdown-- <= 0) && player) {
-			fire_bullet(current);
-			current->countdown = ENEMY_RELOAD;
+		if ((i->countdown-- <= 0) && player) {
+			spawn_bullet(i);
+			i->countdown = ENEMY_RELOAD;
 		}
 
 		//Delete enemy if out of bound / killed
-		if ( (current->pos.y > SCREEN_HEIGHT) || (current->health == 0) ) {
-			remove_entity_from_list(&enemy_list, &current, &prev);
+		if ( (i->pos.y > SCREEN_HEIGHT) || (i->health == 0) ) {
+			remove_entity(&i, &enemy_list);
 		}
-		prev = current;
 	}
 }
 
 void draw_enemies()
 {
-	Entity* b;
-
-	for (b = enemy_list.head->next; b != NULL; b = b->next) {
-		draw_entity(b);
-		draw_rect(get_entity_rect(b));
+	for (Entity* i = enemy_list.head->next; i != NULL; i = i->next) {
+		draw_entity(i);
+		SDL_Color blue = {0x00, 0x00, 0xFF, 0xFF};
+		draw_rect(get_entity_rect(i), &blue);
 	}
 }

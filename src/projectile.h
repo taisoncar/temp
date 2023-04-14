@@ -7,9 +7,9 @@
 extern Entity_list bullet_list;
 extern bool is_fire;
 
-void init_bullet();
+void spawn_bullet(Entity* source);
 void fire_bullet(Entity* entity);
-void update_bullets(double delta_time);
+void update_bullets(float delta_time);
 void draw_bullets();
 void check_bullet_collision(Entity* b);
 

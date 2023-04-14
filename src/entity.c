@@ -3,58 +3,96 @@
 #include <SDL.h>
 #include "setup.h"
 #include "player.h"
+#include "enemy.h"
 
-Entity* create_entity(SDL_Texture* texture, int x, int y, float speed, int health, Side side)
+Entity* create_entity()
 {
-    Entity* entity = (Entity*)malloc(sizeof(Entity));
-    if (entity == NULL) {
+    Entity* new_entity = (Entity*)malloc(sizeof(Entity));
+    if (new_entity == NULL) {
         printf("Insufficient memory");
         exit(1);
     }
+    new_entity->prev = NULL;
+    new_entity->next = NULL;
 
-    int w, h;
-    SDL_QueryTexture(texture, NULL, NULL, &w, &h);
-
-    *entity = (Entity){
-        texture,
-        w, h,
-        { (float)x, (float)y }, //pos
-        { 0.0f, 0.0f },         //vel
-        speed,
-        health,
-        side,
-        0,                      //countdown
-        NULL                    //next
-    };
-
-    return entity;
-}
-
-void destroy_entity(Entity** entity)
-{
-    free(*entity);
-    *entity = NULL;
+    return new_entity;
 }
 
 void update_entity(Entity* entity, double delta_time)
 {
-    if (entity) {
-        Vector2 scaled_vel = entity->vel;
-        normalize_vec(&scaled_vel);
-        scale_vec(&scaled_vel, entity->speed);
+    Vector2 scaled_vel = entity->vel;
+    normalize_vec(&scaled_vel);
+    scale_vec(&scaled_vel, entity->speed);
 
-        entity->pos.x += scaled_vel.x * delta_time;
-        entity->pos.y += scaled_vel.y * delta_time;
-    }
-}
+    entity->pos.x += scaled_vel.x * delta_time;
+    entity->pos.y += scaled_vel.y * delta_time;
+
+    //TODO: move health check to here if no dependency
+} 
 
 void draw_entity(Entity* entity)
 {
-	if (entity) {
-		SDL_Rect entity_rect = get_entity_rect(entity);
-		SDL_RenderCopy(g_renderer, entity->texture, NULL, &entity_rect);
-	}
+    SDL_Rect entity_rect = get_entity_rect(entity);
+    SDL_RenderCopy(g_renderer, entity->texture, NULL, &entity_rect);
 }
+
+Entity_list create_entity_list()
+{
+    Entity_list entity_list;
+
+    entity_list.head = (Entity*)malloc(sizeof(Entity));
+    if (!entity_list.head) {
+        printf("Insufficient memory");
+		exit(1);
+    }
+
+    entity_list.head->next = NULL;
+    entity_list.head->prev = NULL;
+    entity_list.tail = entity_list.head;
+
+    return entity_list;
+}
+
+void add_entity_to_list(Entity* entity, Entity_list* e_list)
+{
+    entity->prev = e_list->tail;
+    e_list->tail->next = entity;
+    e_list->tail = entity;
+}
+
+void remove_entity(Entity** entity, Entity_list* e_list)
+{
+    if (e_list) {
+        /* printf("removing: %p\n", *entity);
+        printf("next: %p\n", (*entity)->next);
+        printf("prev: %p\n\n", (*entity)->prev); */
+
+        if (*entity == e_list->tail) {
+            e_list->tail = (*entity)->prev;
+        }
+        else {
+            //Link next node to prev node
+            (*entity)->next->prev = (*entity)->prev;
+        }
+
+        //Keep a reference to prev node
+        Entity* prev = (*entity)->prev;
+
+        //Link prev node to next node
+        (*entity)->prev->next = (*entity)->next;
+
+        free(*entity);
+        *entity = prev;
+    }
+    else {
+        //If entity is not part of a list
+        free(*entity);
+        *entity = NULL;
+    }
+}
+
+/*Entity utils*/
+//////////////////////////////////////////////////
 
 SDL_Rect get_entity_rect(Entity* entity)
 {
@@ -77,64 +115,4 @@ bool check_entity_collision(Entity* e1, Entity* e2)
     return collision(get_entity_rect(e1), get_entity_rect(e2));
 }
 
-void print_entity(Entity* entity)
-{
-    static int cooldown = 0;
-    if (cooldown-- <= 0) {
-        printf("Entity side: %d\n", entity->side);
-        printf("Entity pos: %f, %f\n", entity->pos.x, entity->pos.y);
-        printf("Entity vel: %f, %f\n\n", entity->vel.x, entity->vel.y);
-
-        cooldown = 60;
-    }
-}
-
-Entity_list create_entity_list()
-{
-    Entity_list entity_list;
-
-    entity_list.head = (Entity*)malloc(sizeof(Entity));
-    if (!entity_list.head) {
-        printf("Insufficient memory");
-		exit(1);
-    }
-
-    entity_list.head->next = NULL;
-    entity_list.tail = entity_list.head;
-
-    return entity_list;
-}
-
-void add_entity_to_list(Entity_list* entity_list, Entity* new_entity)
-{
-    entity_list->tail->next = new_entity;
-    entity_list->tail = new_entity;
-}
-
-void remove_entity_from_list(Entity_list* entity_list, Entity** current, Entity** prev)
-{
-    if (*current == entity_list->tail) {
-       entity_list->tail = *prev;
-    }
-
-    (*prev)->next = (*current)->next;
-    destroy_entity(current);
-    *current = *prev;
-}
-
-void draw_entity_list(Entity_list entity_list)
-{
-	for (Entity* current = entity_list.head->next; current != NULL; current = current->next) {
-		draw_entity(current);
-		draw_rect(get_entity_rect(current));
-	}
-}
-
-void destroy_entity_list(Entity_list* entity_list)
-{
-    Entity* prev = entity_list->head;
-    for (Entity* current = entity_list->head->next; current != NULL; current = current->next) {
-        remove_entity_from_list(entity_list, &current, &prev);
-        prev = current;
-    }
-}
+/////////////////////////////////////////////////

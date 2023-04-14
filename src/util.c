@@ -34,9 +34,12 @@ Vector2 get_rect_center(SDL_Rect rect)
 	return center;
 }
 
-void draw_rect(SDL_Rect rect)
+void draw_rect(SDL_Rect rect, SDL_Color* color)
 {
-	SDL_SetRenderDrawColor(g_renderer, 0x00, 0xFF, 0x00, 255);
+	if (!color) {
+		*color = (SDL_Color){0xFF, 0xFF, 0xFF, 0xFF};
+	}
+	SDL_SetRenderDrawColor(g_renderer, color->r, color->g, color->b, color->a);
 	SDL_RenderDrawRect(g_renderer, &rect);
 }
 

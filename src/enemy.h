@@ -5,6 +5,7 @@
 
 extern Entity_list enemy_list;
 
-void init_enemy();
+void spawn_enemy();
+void init_enemy(Entity* enemy);
 void update_enemies(double delta_time);
 void draw_enemies();

@@ -41,10 +41,10 @@ void init()
 	init_texture();
 	load_font();
 
-	//Init entities
-	create_player();
-	init_bullet();
-	init_enemy();
+	//Init entities and lists
+	enemy_list = create_entity_list();
+	bullet_list = create_entity_list();
+	spawn_player();
 
 	//Init ui
 	init_message();
@@ -52,8 +52,14 @@ void init()
 
 void update(float delta_time)
 {
-	update_player(delta_time);
+	static int cooldown = 0;
+	if (cooldown-- <= 0) {
+		spawn_enemy(); 
+		cooldown = 100;
+	}
+
 	update_bullets(delta_time);
+	update_player(delta_time);
 	update_enemies(delta_time);
 	update_messages();
 }
