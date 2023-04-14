@@ -12,7 +12,7 @@ void kill_player();
 
 void create_player()
 {
-    player = create_entity(g_texture[T_PLAYER], 0, 0, PLAYER_SPEED, 5, PLAYER_SIDE);
+    player = create_entity(g_texture[T_PLAYER], 0, 0, PLAYER_SPEED, 10, PLAYER_SIDE);
     player->w /= 2;
     player->h /= 2;
     player->pos.x = (SCREEN_WIDTH / 2) - (player->w / 2); 

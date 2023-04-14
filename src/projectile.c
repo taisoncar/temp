@@ -85,7 +85,7 @@ void check_bullet_collision(Entity* b)
 		if (check_entity_collision(b, player))
 		{
 			b->health = 0;
-			player->health += 1;
+			player->health -= 1;
 		}
 	}
 }

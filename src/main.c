@@ -11,7 +11,7 @@
 #include "util.h"
 
 void init();
-void update(double delta_time);
+void update(float delta_time);
 void draw();
 
 int main(int argc, char* argv[])
@@ -50,7 +50,7 @@ void init()
 	init_message();
 }
 
-void update(double delta_time)
+void update(float delta_time)
 {
 	update_player(delta_time);
 	update_bullets(delta_time);
