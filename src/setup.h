@@ -3,8 +3,8 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 1000
+#define SCREEN_WIDTH 1600
+#define SCREEN_HEIGHT 900
 
 enum Texture_list {
 	T_PLAYER,
@@ -20,5 +20,6 @@ extern SDL_Texture* g_texture[T_TOTAL];
 
 void init_SDL();
 void close_SDL();
+SDL_Texture *load_texture(char *path);
 void init_texture();
 void load_font();

@@ -9,12 +9,11 @@
 
 #define ENEMY_SPEED 100.0f
 #define ENEMY_RELOAD 60
-#define ENEMY_HEALTH 1
+#define ENEMY_HEALTH 3
 
 Entity_list enemy_list;
 
-void update_enemy(Entity* enemy, double delta_time);
-void draw_enemy(Entity* enemy);
+void init_enemy(Entity* enemy);
 
 void spawn_enemy()
 {
@@ -57,7 +56,7 @@ void update_enemies(double delta_time)
 
 		//Delete enemy if out of bound / killed
 		if ( (i->pos.y > SCREEN_HEIGHT) || (i->health == 0) ) {
-			remove_entity(&i, &enemy_list);
+			destroy_entity(&i, &enemy_list);
 		}
 	}
 }

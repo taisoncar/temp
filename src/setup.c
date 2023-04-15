@@ -80,7 +80,7 @@ void close_SDL()
     printf("SDL closed successfully\n");
 }
 
-SDL_Texture* load_texture(const char* path)
+SDL_Texture* load_texture(char* path)
 {
     SDL_Texture* texture;
 

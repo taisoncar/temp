@@ -57,8 +57,8 @@ void create_texture_for_message(Message* message)
 void init_message()
 {
     g_message[M_FPS] = create_message(g_font, (char*)"FPS: ", NULL, 0, 0);
-    g_message[M_SCORE] = create_message(g_font, (char*)"Score: ", NULL, SCREEN_WIDTH / 2, 0);
-    g_message[M_HEALTH] = create_message(g_font, (char*)"HP: ", NULL, 0, SCREEN_HEIGHT / 2);
+    g_message[M_SCORE] = create_message(g_font, (char*)"Score: ", NULL, SCREEN_WIDTH / 5, 0);
+    g_message[M_HEALTH] = create_message(g_font, (char*)"HP: ", NULL, SCREEN_WIDTH * 2 /5, 0);
 }
 
 

@@ -76,13 +76,13 @@ void get_key_down(SDL_KeyboardEvent* event)
 
 			//Suicide and respawn
 			case SDL_SCANCODE_Q:
-				/* destroy_entity_list(&bullet_list);
-				destroy_entity_list(&enemy_list); */
+				destroy_entity_list(&bullet_list);
+				destroy_entity_list(&enemy_list);
 				break;
 			
 		}
 	} else if (!player && (event->keysym.scancode == SDL_SCANCODE_R)) {
-		//create_player();
+		spawn_player();
 	}
 }
 

@@ -20,9 +20,7 @@ Entity* create_entity()
 
 void update_entity(Entity* entity, double delta_time)
 {
-    Vector2 scaled_vel = entity->vel;
-    normalize_vec(&scaled_vel);
-    scale_vec(&scaled_vel, entity->speed);
+    Vector2 scaled_vel = scale_vec(normalize_vec(entity->vel), entity->speed);
 
     entity->pos.x += scaled_vel.x * delta_time;
     entity->pos.y += scaled_vel.y * delta_time;
@@ -38,19 +36,19 @@ void draw_entity(Entity* entity)
 
 Entity_list create_entity_list()
 {
-    Entity_list entity_list;
+    Entity_list e_list;
 
-    entity_list.head = (Entity*)malloc(sizeof(Entity));
-    if (!entity_list.head) {
+    e_list.head = (Entity*)malloc(sizeof(Entity));
+    if (!e_list.head) {
         printf("Insufficient memory");
 		exit(1);
     }
 
-    entity_list.head->next = NULL;
-    entity_list.head->prev = NULL;
-    entity_list.tail = entity_list.head;
+    e_list.head->next = NULL;
+    e_list.head->prev = NULL;
+    e_list.tail = e_list.head;
 
-    return entity_list;
+    return e_list;
 }
 
 void add_entity_to_list(Entity* entity, Entity_list* e_list)
@@ -60,7 +58,7 @@ void add_entity_to_list(Entity* entity, Entity_list* e_list)
     e_list->tail = entity;
 }
 
-void remove_entity(Entity** entity, Entity_list* e_list)
+void destroy_entity(Entity** entity, Entity_list* e_list)
 {
     if (e_list) {
         /* printf("removing: %p\n", *entity);
@@ -91,9 +89,16 @@ void remove_entity(Entity** entity, Entity_list* e_list)
     }
 }
 
-/*Entity utils*/
-//////////////////////////////////////////////////
+void destroy_entity_list(Entity_list* e_list)
+{
+    for (Entity* i = e_list->head->next; i != NULL; i = i->next) {
+		destroy_entity(&i, e_list);
+	}
+}
 
+
+//////////////////////////////////////////////////
+/*Entity utils*/
 SDL_Rect get_entity_rect(Entity* entity)
 {
     SDL_Rect entity_rect;
@@ -114,5 +119,4 @@ bool check_entity_collision(Entity* e1, Entity* e2)
 {
     return collision(get_entity_rect(e1), get_entity_rect(e2));
 }
-
 /////////////////////////////////////////////////

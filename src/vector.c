@@ -12,19 +12,22 @@ Vector2 calc_slope(Vector2 src, Vector2 dest)
 	return slope;
 }
 
-void normalize_vec(Vector2* vector)
+Vector2 normalize_vec(Vector2 vector)
 {
-	float magnitude = sqrt(pow(vector->x, 2) + pow(vector->y, 2));
+	float magnitude = sqrt(pow(vector.x, 2) + pow(vector.y, 2));
 	if (magnitude && (magnitude != 1.0f)) {
-		vector->x /= magnitude;
-		vector->y /= magnitude;
+		vector.x /= magnitude;
+		vector.y /= magnitude;
 	}
+	return vector;
 }
 
-void scale_vec(Vector2* vector, float scale)
+Vector2 scale_vec(Vector2 vector, float scalar)
 {
-	vector->x *= scale;
-	vector->y *= scale;
+	vector.x *= scalar;
+	vector.y *= scalar;
+
+	return vector;
 }
 
 Vector2 add_vec(Vector2 p1, Vector2 p2)
