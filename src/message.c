@@ -93,7 +93,7 @@ void update_messages()
 
     //Health
     if (player) {
-        update_message(g_message[M_HEALTH], "HP: %d", player->health);
+        update_message(g_message[M_HEALTH], "HP: %d", player->entity->health);
     }
     else {
         update_message(g_message[M_HEALTH], "HP: 0");

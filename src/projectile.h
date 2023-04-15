@@ -12,4 +12,3 @@ void fire_bullet(Entity* entity);
 void update_bullets(float delta_time);
 void draw_bullets();
 void check_bullet_collision(Entity* b);
-

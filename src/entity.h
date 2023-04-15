@@ -2,6 +2,7 @@
 
 #include <SDL.h>
 #include "util.h"
+#include "animator.h"
 
 typedef enum {
 	PLAYER_ID,
@@ -19,22 +20,26 @@ typedef void (*Extension);
 struct Entity;
 typedef struct Entity Entity;
 struct Entity {
-	Entity_ID		id;
-	SDL_Texture*	texture;
+	Entity_ID 	id;
 
-	int				w, h;
-	Vector2			pos;
-	Vector2			vel;	
-	float			speed;
+	SDL_Texture* 	texture;
 
-	int				health;
-	Side			side;
-	int				countdown;
+	int			w, h;
+	Vector2 	pos;
+	Vector2		vel;	
+	float		speed;
 
-	Extension		data;
+	int			health;
+	Side		side;
+	int			countdown;
 
-	Entity*			prev;
-	Entity*			next;
+	//Entity specific properties
+	union {
+		bool 	is_fire;
+	};
+
+	Entity*		prev;
+	Entity*		next;
 };
 
 typedef struct {

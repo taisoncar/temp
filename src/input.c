@@ -43,30 +43,30 @@ void get_key_down(SDL_KeyboardEvent* event)
 		switch (event->keysym.scancode) {
 			//Arrrow keys
 			case SDL_SCANCODE_UP:
-				player->vel.y -= 1;
+				player->entity->vel.y -= 1;
 				break;
 			case SDL_SCANCODE_DOWN:
-				player->vel.y += 1;
+				player->entity->vel.y += 1;
 				break;
 			case SDL_SCANCODE_LEFT:
-				player->vel.x -= 1;
+				player->entity->vel.x -= 1;
 				break;
 			case SDL_SCANCODE_RIGHT:
-				player->vel.x += 1;
+				player->entity->vel.x += 1;
 				break;
 
 			//WASD
 			case SDL_SCANCODE_W:
-				player->vel.y -= 1;
+				player->entity->vel.y -= 1;
 				break;
 			case SDL_SCANCODE_S:
-				player->vel.y += 1;
+				player->entity->vel.y += 1;
 				break;
 			case SDL_SCANCODE_A:
-				player->vel.x -= 1;
+				player->entity->vel.x -= 1;
 				break;
 			case SDL_SCANCODE_D:
-				player->vel.x += 1;
+				player->entity->vel.x += 1;
 				break;
 
 			//Fire bullet
@@ -92,36 +92,36 @@ void get_key_up(SDL_KeyboardEvent* event)
 		switch (event->keysym.scancode) {
 			//Arrow keys
 			case SDL_SCANCODE_UP:
-				player->vel.y += 1;
+				player->entity->vel.y += 1;
 				break;
 			case SDL_SCANCODE_DOWN:
-				player->vel.y -= 1;
+				player->entity->vel.y -= 1;
 				break;
 			case SDL_SCANCODE_LEFT:
-				player->vel.x += 1;
+				player->entity->vel.x += 1;
 				break;
 			case SDL_SCANCODE_RIGHT:
-				player->vel.x -= 1;
+				player->entity->vel.x -= 1;
 				break;
 
 			//WASD
 			case SDL_SCANCODE_W:
-				player->vel.y += 1;
+				player->entity->vel.y += 1;
 				break;
 			case SDL_SCANCODE_S:
-				player->vel.y -= 1;
+				player->entity->vel.y -= 1;
 				break;
 			case SDL_SCANCODE_A:
-				player->vel.x += 1;
+				player->entity->vel.x += 1;
 				break;
 			case SDL_SCANCODE_D:
-				player->vel.x -= 1;
+				player->entity->vel.x -= 1;
 				break;
 			
 			//Fire bullet
 			case SDL_SCANCODE_E:
 				is_fire = false;
-				player->countdown = 0;
+				player->entity->countdown = 0;
 				break;
 		}
 	}

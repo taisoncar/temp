@@ -1,5 +1,7 @@
 #include "player.h"
 #include <SDL.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "entity.h"
 #include "setup.h"
 #include "input.h"
@@ -7,59 +9,72 @@
 #include "animator.h"
 
 #define PLAYER_SPEED 400.0f
-#define PLAYER_HEALTH 1000
+#define PLAYER_HEALTH 10
 #define PLAYER_RELOAD 10
 
-Entity* player = NULL;
+Player* player = NULL;
 
 void kill_player();
 
 void spawn_player()
 {
-    player = create_entity();
-    init_player(player);
-}
+    player = malloc(sizeof(Player));
+    if (player == NULL) {
+        printf("Insufficient memory");
+        exit(1);
+    }
+    player->entity = create_entity();
 
-void init_player(Entity* new_player)
-{
-    new_player->vel.x = 0.0f;
-    new_player->vel.y = 0.0f;
-    new_player->speed = PLAYER_SPEED;
+    //Setup player animator and anim_list
+    player->anim_list = malloc(PLAYER_TOTAL_ANIM * sizeof(Animation));
+    player->anim_list[PLAYER_IDLE] = create_animation("../res/img/PlayerIdle.png", 10.0f);
+    player->anim_list[PLAYER_WALK] = create_animation("../res/img/PlayerJump.png", 10.0f);
+    player->anim_list[PLAYER_JUMP] = create_animation("../res/img/PlayerJump.png", 10.0f);
+    start_animation(&player->animator, player->anim_list[PLAYER_WALK]);
 
-    new_player->health = PLAYER_HEALTH;
-    new_player->side = PLAYER_SIDE;
-    new_player->countdown = 0;
+    //Setup player entity
+    player->entity->w = player->anim_list->wh * 3;
+    player->entity->h = player->anim_list->wh * 3;
 
-    Player* player_data = malloc(sizeof(Player));
-    player_data->animation = create_animation("../res/img/PlayerIdle.png", 10.0f);
-    new_player->data = player_data;
+    player->entity->pos.x = (SCREEN_WIDTH / 2) - (player->entity->w / 2); 
+    player->entity->pos.y = SCREEN_HEIGHT - player->entity->h;
 
-    new_player->w = player_data->animation.wh * 3;
-    new_player->h = player_data->animation.wh * 3;
+    player->entity->vel.x = 0.0f;
+    player->entity->vel.y = 0.0f;
+    player->entity->speed = PLAYER_SPEED;
 
-    new_player->pos.x = (SCREEN_WIDTH / 2) - (new_player->w / 2); 
-    new_player->pos.y = SCREEN_HEIGHT - new_player->h;
+    player->entity->health = PLAYER_HEALTH;
+    player->entity->side = PLAYER_SIDE;
+    player->entity->countdown = 0;
+
+    
 }
 
 void update_player(float delta_time)
 {
-    if (is_fire && player && (player->countdown-- <= 0)) {
-		spawn_bullet(player);
-		player->countdown = PLAYER_RELOAD;
+    if (is_fire && player && (player->entity->countdown-- <= 0)) {
+		spawn_bullet(player->entity);
+		player->entity->countdown = PLAYER_RELOAD;
 	}
 
-    if (player && (player->health <= 0)) {
+    if (player && (player->entity->health <= 0)) {
         kill_player();
     }
     else if (player) {
-        update_entity(player, delta_time);
+        update_entity(player->entity, delta_time);
 
         //If out of bound
-        if ((player->pos.x < 0) || (player->pos.x + player->w > SCREEN_WIDTH)) {
-            player->pos.x = 0;
+        if (player->entity->pos.x < 0) {
+            player->entity->pos.x = 0;
         }
-        if ((player->pos.y < 0) || (player->pos.y + player->h > SCREEN_HEIGHT)) {
-            player->pos.y = 0;
+        else if (player->entity->pos.x + player->entity->w > SCREEN_WIDTH) {
+            player->entity->pos.x = SCREEN_WIDTH - player->entity->w;
+        }
+        if (player->entity->pos.y < 0) {
+            player->entity->pos.y = 0;
+        }
+        else if (player->entity->pos.y + player->entity->h > SCREEN_HEIGHT) {
+            player->entity->pos.y = SCREEN_HEIGHT - player->entity->h;
         }
     }
 }
@@ -68,15 +83,18 @@ void draw_player()
 {
     if (player) {
         /* draw_entity(player); */
+
         SDL_Color green = {0x00, 0xFF, 0x00, 0xFF};
-        draw_rect(get_entity_rect(player), &green); 
-        Player* player_d = (Player*)player->data;
-        play_animation(&player_d->animation, get_entity_rect(player));
+        draw_rect(get_entity_rect(player->entity), &green); 
+        play_animation(&player->animator, get_entity_rect(player->entity));
     }
 }
 
 void kill_player()
 {
-    destroy_entity(&player, NULL);
+    destroy_entity(&player->entity, NULL);
+    free(player->anim_list);
+    free(player);
+    player = NULL;
     is_fire = false;
 }

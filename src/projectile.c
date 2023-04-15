@@ -37,7 +37,7 @@ void init_bullet(Entity* bullet, Entity* source)
 	}
 	else if (source->side == ENEMY_SIDE) {
 		bullet->pos.y += source->h;
-		bullet->vel = calc_slope(get_entity_center(bullet), get_entity_center(player));
+		bullet->vel = calc_slope(get_entity_center(bullet), get_entity_center(player->entity));
 	}
     bullet->speed = BULLET_SPEED;
 
@@ -87,10 +87,10 @@ void check_bullet_collision(Entity* bullet)
 		}
 	}
 	else if ((bullet->side == ENEMY_SIDE) && player) {
-		if (check_entity_collision(bullet, player))
+		if (check_entity_collision(bullet, player->entity))
 		{
 			bullet->health -= 1;
-			player->health -= 1;
+			player->entity->health -= 1;
 		}
 	}
 }
