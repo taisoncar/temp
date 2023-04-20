@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "setup.h"
 
-Animation create_animation(char* path, float frame_interval)
+Animation create_animation(char *path, float frame_interval)
 {
     Animation animation;
 
@@ -19,30 +19,31 @@ Animation create_animation(char* path, float frame_interval)
     return animation;
 }
 
-void start_animation(Animator* animator, Animation animation)
+void start_animation(Animator *animator, Animation animation)
 {
-    animator->animation = animation;
-    animator->frame_index = 0;
-    animator->timer = animation.frame_interval;
-}
-
-void play_animation(Animator* animator, SDL_Rect dest)
-{
-    SDL_Rect src;
-    src.x = animator->animation.wh * animator->frame_index;
-    src.y = 0;
-    src.w = animator->animation.wh;
-    src.h = animator->animation.wh;
-
-    SDL_RenderCopy(g_renderer, animator->animation.texture, &src, &dest);
-
-    if (animator->timer-- <= 0) {
-        animator->frame_index = (animator->frame_index + 1) % animator->animation.frame_count;
-        animator->timer = animator->animation.frame_interval;
+    if (animator->animation.texture != animation.texture) {
+        animator->animation = animation;
+        animator->frame_index = 0;
+        animator->timer = animation.frame_interval;
     }
 }
 
-void stop_animation()
+void update_animator(Animator *animator, float delta_time)
 {
+    if (animator->timer <= 0) {
+        animator->frame_index = (animator->frame_index + 1) % animator->animation.frame_count;
+        animator->timer = animator->animation.frame_interval;
+    }
+    animator->timer -= delta_time;
+}
 
+SDL_Rect play_animation(Animator animator)
+{
+    SDL_Rect src;
+    src.x = animator.animation.wh * animator.frame_index;
+    src.y = 0;
+    src.w = animator.animation.wh;
+    src.h = animator.animation.wh;
+
+    return src;
 }

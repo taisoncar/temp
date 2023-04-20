@@ -2,13 +2,25 @@
 
 #include <SDL.h>
 #include "entity.h"
-#include "util.h"
 
-extern Entity_list bullet_list;
-extern bool is_fire;
+struct Bullet;
+typedef struct Bullet Bullet;
+struct Bullet{
+    Entity entity;
+    Bullet *next;
+};
 
-void spawn_bullet(Entity* source);
-void fire_bullet(Entity* entity);
+typedef struct {
+    Bullet head;
+    Bullet *tail;
+} Bullet_list;
+
+extern Bullet_list bullet_list;
+
+void init_bullet_list();
+void spawn_bullet(Entity source);
+
 void update_bullets(float delta_time);
 void draw_bullets();
+
 void check_bullet_collision(Entity* b);

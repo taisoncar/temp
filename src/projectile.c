@@ -1,5 +1,6 @@
 #include "projectile.h"
 #include <stdio.h>
+#include <assert.h>
 #include "entity.h"
 #include "player.h"
 #include "setup.h"
@@ -10,65 +11,77 @@
 #define BULLET_DURATION 600
 #define BULLET_HEALTH 1
 
-Entity_list bullet_list;
+Bullet_list bullet_list;
 int score = 0;
 
-void init_bullet(Entity* bullet, Entity* source);
-
-void spawn_bullet(Entity* source)
+void init_bullet_list()
 {
-	Entity* new_bullet = create_entity();
-	init_bullet(new_bullet, source);
-	add_entity_to_list(new_bullet, &bullet_list);
+    bullet_list.head.next = NULL;
+    bullet_list.tail = &bullet_list.head;
 }
 
-void init_bullet(Entity* bullet, Entity* source)
+
+void spawn_bullet(Entity source)
 {
-    bullet->texture = g_texture[T_BULLET];
-    SDL_QueryTexture(bullet->texture, NULL, NULL, &bullet->w, &bullet->h);
+	Bullet *new_bullet = malloc(sizeof(Bullet));
+	assert(new_bullet);
 
-    bullet->w = 5;
-    bullet->h = 5;
-    bullet->pos.x = source->pos.x + (source->w / 2) - (bullet->w / 2);
-    bullet->pos.y = source->pos.y;
-    bullet->vel.x = 0.0f;
-	if (source->side == PLAYER_SIDE) {
-		bullet->vel.y = -1.0f;
-	}
-	else if (source->side == ENEMY_SIDE) {
-		bullet->pos.y += source->h;
-		bullet->vel = calc_slope(get_entity_center(bullet), get_entity_center(player->entity));
-	}
-    bullet->speed = BULLET_SPEED;
+	bullet_list.tail = bullet_list.tail->next = new_bullet;
+	new_bullet->next = NULL;
 
-    bullet->health = BULLET_HEALTH;
-    bullet->side = source->side;
-    bullet->countdown = BULLET_DURATION;
+	//Setup bullet entity struct
+	new_bullet->entity.texture = g_texture[T_BULLET];
+    SDL_QueryTexture(new_bullet->entity.texture, NULL, NULL, &new_bullet->entity.w, &new_bullet->entity.h);
+
+    new_bullet->entity.w = 5;
+    new_bullet->entity.h = 5;
+    new_bullet->entity.pos.x = source.pos.x + (source.w / 2) - (new_bullet->entity.w / 2);
+    new_bullet->entity.pos.y = source.pos.y;
+    new_bullet->entity.vel.x = 0.0f;
+	if (source.side == PLAYER_SIDE) {
+		new_bullet->entity.vel.y = -1.0f;
+	}
+	else if (source.side == ENEMY_SIDE) {
+		new_bullet->entity.pos.y += source.h;
+		new_bullet->entity.vel = calc_slope(get_entity_center(new_bullet->entity), get_entity_center(player->entity));
+	}
+    new_bullet->entity.speed = BULLET_SPEED;
+
+    new_bullet->entity.health = BULLET_HEALTH;
+    new_bullet->entity.side = source.side;
+    new_bullet->entity.countdown = BULLET_DURATION;
 }
 
 void update_bullets(float delta_time)
 {
-	for (Entity* i = bullet_list.head->next; i != NULL; i = i->next) {
-		update_entity(i, delta_time);
-		check_bullet_collision(i);
+	Bullet *prev = &bullet_list.head;
+	for (Bullet *i = bullet_list.head.next; i != NULL; i = i->next) {
+		update_entity(&i->entity, delta_time);
+		check_bullet_collision(&i->entity);
 
-		if ( (i->pos.y < 0) || (i->health == 0) || (i->countdown-- <= 0) ){
-			destroy_entity(&i, &bullet_list);
+		if ( (i->entity.pos.y < 0) || (i->entity.health <= 0) || (i->entity.countdown-- <= 0) ){
+			if (i == bullet_list.tail) {
+				bullet_list.tail = prev;
+			}
+			prev->next = i->next;
+			free(i);
+			i = prev;
 		}
+		prev = i;
 	}
 }
 
 void draw_bullets()
 {
-	for (Entity* i = bullet_list.head->next; i != NULL; i = i->next) {
-		draw_entity(i);
-		if (i->side == PLAYER_SIDE) {
+	for (Bullet *i = bullet_list.head.next; i != NULL; i = i->next) {
+		draw_entity(i->entity);
+		if (i->entity.side == PLAYER_SIDE) {
 			SDL_Color green = {0x00, 0xFF, 0x00, 0xFF};
-			draw_rect(get_entity_rect(i), &green);
+			draw_rect(get_entity_rect(i->entity), &green);
 		}
-		else if (i->side == ENEMY_SIDE) {
-			SDL_Color blue = {0x00, 0x00, 0xFF, 0xFF};
-			draw_rect(get_entity_rect(i), &blue);
+		else if (i->entity.side == ENEMY_SIDE) {
+			SDL_Color blue = {0xFC, 0x29, 0x47, 0xFF};
+			draw_rect(get_entity_rect(i->entity), &blue);
 		}
 	}
 }
@@ -76,21 +89,21 @@ void draw_bullets()
 void check_bullet_collision(Entity* bullet)
 {
 	if (bullet->side == PLAYER_SIDE) {
-		for (Entity* e = enemy_list.head->next; e != NULL; e = e->next)
+		for (Enemy *e = enemy_list.head.next; e != NULL; e = e->next)
 		{
-			if (check_entity_collision(bullet, e))
+			if (check_entity_collision(*bullet, e->entity))
 			{
 				bullet->health -= 1;
-				e->health -= 1;
+				e->entity.health -= 1;
 				score++;
 			}
 		}
 	}
 	else if ((bullet->side == ENEMY_SIDE) && player) {
-		if (check_entity_collision(bullet, player->entity))
+		if (check_entity_collision(*bullet, player->entity))
 		{
 			bullet->health -= 1;
-			player->entity->health -= 1;
+			player->entity.health -= 1;
 		}
 	}
 }

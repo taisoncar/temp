@@ -22,7 +22,7 @@ typedef struct Entity Entity;
 struct Entity {
 	Entity_ID 	id;
 
-	SDL_Texture* 	texture;
+	SDL_Texture	*texture;
 
 	int			w, h;
 	Vector2 	pos;
@@ -32,30 +32,11 @@ struct Entity {
 	int			health;
 	Side		side;
 	int			countdown;
-
-	//Entity specific properties
-	union {
-		bool 	is_fire;
-	};
-
-	Entity*		prev;
-	Entity*		next;
 };
 
-typedef struct {
-	Entity* head;
-	Entity* tail;
-} Entity_list;
+void update_entity(Entity* entity, float delta_time);
+void draw_entity(Entity entity);
 
-Entity* create_entity();
-void update_entity(Entity* entity, double delta_time);
-void draw_entity(Entity* entity);
-
-Entity_list create_entity_list();
-void add_entity_to_list(Entity *entity, Entity_list *e_list);
-void destroy_entity(Entity **entity, Entity_list *e_list);
-void destroy_entity_list(Entity_list *e_list);
-
-SDL_Rect get_entity_rect(Entity* entity);
-Vector2 get_entity_center(Entity* entity);
-bool check_entity_collision(Entity* e1, Entity* e2);
+SDL_Rect get_entity_rect(Entity entity);
+Vector2 get_entity_center(Entity entity);
+bool check_entity_collision(Entity e1, Entity e2);

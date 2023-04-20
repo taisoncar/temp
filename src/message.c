@@ -57,8 +57,8 @@ void create_texture_for_message(Message* message)
 void init_message()
 {
     g_message[M_FPS] = create_message(g_font, (char*)"FPS: ", NULL, 0, 0);
-    g_message[M_SCORE] = create_message(g_font, (char*)"Score: ", NULL, SCREEN_WIDTH / 5, 0);
-    g_message[M_HEALTH] = create_message(g_font, (char*)"HP: ", NULL, SCREEN_WIDTH * 2 /5, 0);
+    g_message[M_SCORE] = create_message(g_font, (char*)"Score: ", NULL, SCREEN_WIDTH / 10, 0);
+    g_message[M_HEALTH] = create_message(g_font, (char*)"HP: ", NULL, SCREEN_WIDTH * 2 /10, 0);
 }
 
 
@@ -93,7 +93,7 @@ void update_messages()
 
     //Health
     if (player) {
-        update_message(g_message[M_HEALTH], "HP: %d", player->entity->health);
+        update_message(g_message[M_HEALTH], "HP: %d", player->entity.health);
     }
     else {
         update_message(g_message[M_HEALTH], "HP: 0");

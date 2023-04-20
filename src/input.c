@@ -8,8 +8,6 @@
 #include "util.h"
 #include "enemy.h"
 
-bool is_fire = false;
-
 void get_key_down(SDL_KeyboardEvent* event);
 void get_key_up(SDL_KeyboardEvent* event);
 
@@ -42,42 +40,34 @@ void get_key_down(SDL_KeyboardEvent* event)
 	if (!event->repeat && player) {
 		switch (event->keysym.scancode) {
 			//Arrrow keys
-			case SDL_SCANCODE_UP:
-				player->entity->vel.y -= 1;
-				break;
-			case SDL_SCANCODE_DOWN:
-				player->entity->vel.y += 1;
-				break;
-			case SDL_SCANCODE_LEFT:
-				player->entity->vel.x -= 1;
-				break;
-			case SDL_SCANCODE_RIGHT:
-				player->entity->vel.x += 1;
-				break;
-
-			//WASD
+			case SDL_SCANCODE_UP: 
 			case SDL_SCANCODE_W:
-				player->entity->vel.y -= 1;
+				player->entity.vel.y -= 1;
 				break;
+			case SDL_SCANCODE_DOWN: 
 			case SDL_SCANCODE_S:
-				player->entity->vel.y += 1;
+				player->entity.vel.y += 1;
 				break;
+			case SDL_SCANCODE_LEFT: 
 			case SDL_SCANCODE_A:
-				player->entity->vel.x -= 1;
+				player->entity.vel.x -= 1;
+				//player->facing_right = 0;
 				break;
+			case SDL_SCANCODE_RIGHT: 
 			case SDL_SCANCODE_D:
-				player->entity->vel.x += 1;
+				player->entity.vel.x += 1;
+				//player->facing_right = 1;
 				break;
 
 			//Fire bullet
 			case SDL_SCANCODE_E:
-				is_fire = true;
+				player->is_fire = true;
 				break;
 
 			//Suicide and respawn
 			case SDL_SCANCODE_Q:
-				destroy_entity_list(&bullet_list);
-				destroy_entity_list(&enemy_list);
+				//destroy_entity_list(&bullet_list);
+				//destroy_entity_list(&enemy_list);
 				break;
 			
 		}
@@ -91,37 +81,27 @@ void get_key_up(SDL_KeyboardEvent* event)
 	if (!event->repeat && player) {
 		switch (event->keysym.scancode) {
 			//Arrow keys
-			case SDL_SCANCODE_UP:
-				player->entity->vel.y += 1;
-				break;
-			case SDL_SCANCODE_DOWN:
-				player->entity->vel.y -= 1;
-				break;
-			case SDL_SCANCODE_LEFT:
-				player->entity->vel.x += 1;
-				break;
-			case SDL_SCANCODE_RIGHT:
-				player->entity->vel.x -= 1;
-				break;
-
-			//WASD
+			case SDL_SCANCODE_UP: 
 			case SDL_SCANCODE_W:
-				player->entity->vel.y += 1;
+				player->entity.vel.y += 1;
 				break;
+			case SDL_SCANCODE_DOWN: 
 			case SDL_SCANCODE_S:
-				player->entity->vel.y -= 1;
+				player->entity.vel.y -= 1;
 				break;
+			case SDL_SCANCODE_LEFT: 
 			case SDL_SCANCODE_A:
-				player->entity->vel.x += 1;
+				player->entity.vel.x += 1;
 				break;
+			case SDL_SCANCODE_RIGHT: 
 			case SDL_SCANCODE_D:
-				player->entity->vel.x -= 1;
+				player->entity.vel.x -= 1;
 				break;
 			
 			//Fire bullet
 			case SDL_SCANCODE_E:
-				is_fire = false;
-				player->entity->countdown = 0;
+				player->is_fire = false;
+				player->entity.countdown = 0;
 				break;
 		}
 	}

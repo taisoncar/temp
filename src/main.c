@@ -42,8 +42,8 @@ void init()
 	load_font();
 
 	//Init entities and lists
-	enemy_list = create_entity_list();
-	bullet_list = create_entity_list();
+	init_enemy_list();
+	init_bullet_list();
 	spawn_player();
 
 	//Init ui
@@ -66,7 +66,7 @@ void update(float delta_time)
 
 void draw()
 {
-	SDL_SetRenderDrawColor(g_renderer, 0x00, 0x00, 0x00, 255);
+	SDL_SetRenderDrawColor(g_renderer, 0x3C, 0x48, 0x6B, 255);
 	SDL_RenderClear(g_renderer);
 	//////////////////////////
 	
