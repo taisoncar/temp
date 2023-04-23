@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include <SDL.h>
 #include "setup.h"
 #include "player.h"
@@ -15,10 +16,7 @@ void update_message(Message* message, const char *fmt, ...);
 Message* create_message(TTF_Font* font, char* text, SDL_Color* text_color, int x, int y)
 {
     Message* message = (Message*)malloc(sizeof(Message));
-    if (message == NULL) {
-        printf("Insufficient memory");
-        exit(1);
-    }
+    assert(message);
 
     if (!text_color) {
         message->color = (SDL_Color){ 0xFF, 0xFF, 0xFF };
@@ -54,13 +52,19 @@ void create_texture_for_message(Message* message)
     message->texture = texture;
 }
 
-void init_message()
+void init_messages()
 {
     g_message[M_FPS] = create_message(g_font, (char*)"FPS: ", NULL, 0, 0);
     g_message[M_SCORE] = create_message(g_font, (char*)"Score: ", NULL, SCREEN_WIDTH / 10, 0);
     g_message[M_HEALTH] = create_message(g_font, (char*)"HP: ", NULL, SCREEN_WIDTH * 2 /10, 0);
 }
 
+void destroy_messages()
+{
+    for (int i = 0; i < M_TOTAL; i++) {
+        free(g_message[i]);
+    }
+}
 
 void update_message(Message* message, const char *fmt, ...)
 {
@@ -100,15 +104,10 @@ void update_messages()
     }
 }
 
-void draw_message(Message* message)
-{
-	SDL_RenderCopy(g_renderer, message->texture, NULL, &message->rect);
-}
-
 void draw_messages()
 {
     for (int i = 0; i < M_TOTAL; i++) {
-        draw_message(g_message[i]);
+        SDL_RenderCopy(g_renderer, g_message[i]->texture, NULL, &g_message[i]->rect);
     }
 }
 

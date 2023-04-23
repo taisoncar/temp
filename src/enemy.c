@@ -20,6 +20,19 @@ void init_enemy_list()
     enemy_list.tail = &enemy_list.head;
 }
 
+void destroy_enemy_list()
+{
+	Enemy *prev = &enemy_list.head;
+	for (Enemy *i = enemy_list.head.next; i != NULL; i = i->next) {
+		if (i == enemy_list.tail) {
+			enemy_list.tail = prev;
+		}
+		prev->next = i->next;
+		free(i);
+		i = prev;
+	}
+}
+
 void spawn_enemy()
 {
 
@@ -27,7 +40,6 @@ void spawn_enemy()
 	assert(new_enemy);
 
 	enemy_list.tail = enemy_list.tail->next = new_enemy;
-
 	new_enemy->next = NULL;
 
 	//Setup enemy entity struct

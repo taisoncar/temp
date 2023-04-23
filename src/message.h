@@ -21,8 +21,8 @@ typedef struct {
 extern Message* g_message[M_TOTAL];
 
 Message* create_message(TTF_Font* font, char* text, SDL_Color* text_color, int x, int y);
-void init_message();
+void init_messages();
+void destroy_messages();
 void update_messages();
-void draw_message(Message* message);
 void draw_messages();
 

@@ -66,8 +66,8 @@ void get_key_down(SDL_KeyboardEvent* event)
 
 			//Suicide and respawn
 			case SDL_SCANCODE_Q:
-				//destroy_entity_list(&bullet_list);
-				//destroy_entity_list(&enemy_list);
+				destroy_bullet_list();
+				destroy_enemy_list();
 				break;
 			
 		}

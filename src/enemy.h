@@ -18,6 +18,7 @@ typedef struct {
 extern Enemy_list enemy_list;
 
 void init_enemy_list();
+void destroy_enemy_list();
 void spawn_enemy();
 
 void update_enemies(float delta_time);

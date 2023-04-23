@@ -18,6 +18,7 @@ typedef struct {
 extern Bullet_list bullet_list;
 
 void init_bullet_list();
+void destroy_bullet_list();
 void spawn_bullet(Entity source);
 
 void update_bullets(float delta_time);

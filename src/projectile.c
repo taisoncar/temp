@@ -20,6 +20,18 @@ void init_bullet_list()
     bullet_list.tail = &bullet_list.head;
 }
 
+void destroy_bullet_list()
+{
+	Bullet *prev = &bullet_list.head;
+	for (Bullet *i = bullet_list.head.next; i != NULL; i = i->next) {
+		if (i == bullet_list.tail) {
+			bullet_list.tail = prev;
+		}
+		prev->next = i->next;
+		free(i);
+		i = prev;
+	}
+}
 
 void spawn_bullet(Entity source)
 {

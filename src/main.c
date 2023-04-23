@@ -47,7 +47,7 @@ void init()
 	spawn_player();
 
 	//Init ui
-	init_message();
+	init_messages();
 }
 
 void update(float delta_time)

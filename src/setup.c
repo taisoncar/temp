@@ -5,6 +5,10 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include "entity.h"
+#include "message.h"
+#include "enemy.h"
+#include "projectile.h"
+#include "player.h"
 
 SDL_Window* g_window = NULL;
 SDL_Renderer* g_renderer = NULL;
@@ -54,8 +58,12 @@ void init_SDL(void)
 void close_SDL()
 {
     //Messages
-    
+    destroy_messages();
+
     //Entities
+    destroy_enemy_list();
+    destroy_bullet_list();
+    kill_player();
 
     //Font
     TTF_CloseFont(g_font);
@@ -63,7 +71,7 @@ void close_SDL()
     //Textures
     for (int i = 0; i < T_TOTAL; i++) {
         SDL_DestroyTexture(g_texture[i]);
-        //error catchhing
+        //TODO: error catchhing
     }
     
     //System

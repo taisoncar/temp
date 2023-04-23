@@ -37,6 +37,7 @@ struct Entity {
 void update_entity(Entity* entity, float delta_time);
 void draw_entity(Entity entity);
 
+//Utilities
 SDL_Rect get_entity_rect(Entity entity);
 Vector2 get_entity_center(Entity entity);
 bool check_entity_collision(Entity e1, Entity e2);

@@ -41,6 +41,6 @@ Vector2 get_entity_center(Entity entity)
 
 bool check_entity_collision(Entity e1, Entity e2)
 {
-    return collision(get_entity_rect(e1), get_entity_rect(e2));
+    return rect_collision(get_entity_rect(e1), get_entity_rect(e2));
 }
 //////////////////////////////////////////////////////////////////////

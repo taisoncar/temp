@@ -49,6 +49,12 @@ void spawn_player()
     player->facing_right = true;
 }
 
+void kill_player()
+{
+    free(player);
+    player = NULL;
+}
+
 void update_player(float delta_time)
 {
     if (player && (player->entity.health <= 0)) {
@@ -114,10 +120,4 @@ void draw_player()
             SDL_RenderCopyEx(g_renderer, player->animator.animation.texture, &src, &dest, 0, NULL, SDL_FLIP_HORIZONTAL);
         }
     }
-}
-
-void kill_player()
-{
-    free(player);
-    player = NULL;
 }
