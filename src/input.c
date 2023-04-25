@@ -101,7 +101,7 @@ void get_key_up(SDL_KeyboardEvent* event)
 			//Fire bullet
 			case SDL_SCANCODE_E:
 				player->is_fire = false;
-				player->entity.countdown = 0;
+				player->reload = 0;
 				break;
 		}
 	}

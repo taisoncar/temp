@@ -93,7 +93,9 @@ void update_messages()
     }
 
     //Score
-    update_message(g_message[M_SCORE], "Score: %d", score);
+    if (player) {
+        update_message(g_message[M_SCORE], "Score: %d", player->score);
+    }
 
     //Health
     if (player) {

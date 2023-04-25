@@ -7,6 +7,9 @@ struct Bullet;
 typedef struct Bullet Bullet;
 struct Bullet{
     Entity entity;
+
+    SDL_Texture* texture;
+    
     Bullet *next;
 };
 

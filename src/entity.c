@@ -15,11 +15,11 @@ void update_entity(Entity* entity, float delta_time)
     //TODO: move health check to here if no dependency
 } 
 
-void draw_entity(Entity entity)
+/* void draw_entity(Entity entity)
 {
     SDL_Rect entity_rect = get_entity_rect(entity);
     SDL_RenderCopy(g_renderer, entity.texture, NULL, &entity_rect);
-}
+} */
 
 //////////////////////////////////////////////////////////////////////
 /*Entity utils*/

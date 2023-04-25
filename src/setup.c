@@ -75,15 +75,15 @@ void close_SDL()
     }
     
     //System
-    SDL_DestroyWindow(g_window);
     SDL_DestroyRenderer(g_renderer);
-
-    g_window = NULL;
     g_renderer = NULL;
 
-    SDL_Quit();
-    IMG_Quit();
+    SDL_DestroyWindow(g_window);
+    g_window = NULL;
+
     TTF_Quit();
+    IMG_Quit();
+    SDL_Quit();
 
     printf("SDL closed successfully\n");
 }

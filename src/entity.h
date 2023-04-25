@@ -4,11 +4,11 @@
 #include "util.h"
 #include "animator.h"
 
-typedef enum {
+/* typedef enum {
 	PLAYER_ID,
 	ENEMY_ID,
 	BULLET_ID
-} Entity_ID;
+} Entity_ID; */
 
 typedef enum {
 	PLAYER_SIDE,
@@ -20,10 +20,6 @@ typedef void (*Extension);
 struct Entity;
 typedef struct Entity Entity;
 struct Entity {
-	Entity_ID 	id;
-
-	SDL_Texture	*texture;
-
 	int			w, h;
 	Vector2 	pos;
 	Vector2		vel;	
@@ -31,11 +27,9 @@ struct Entity {
 
 	int			health;
 	Side		side;
-	int			countdown;
 };
 
 void update_entity(Entity* entity, float delta_time);
-void draw_entity(Entity entity);
 
 //Utilities
 SDL_Rect get_entity_rect(Entity entity);

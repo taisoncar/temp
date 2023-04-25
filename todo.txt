@@ -1,0 +1,31 @@
+------------
+HIGH PRIO
+------------
+- state/stage module to control program wide properties (quit, showbox)
+- makefile
+- collision box var inside entity struct to replace w, h
+  = collision box adapts local coordinate system that can be converted to global through a func
+- eliminate all abbreviation
+
+------------
+MEDIUM PRIO
+------------
+- physics timestep/fixed update, dt
+- more log messages
+- rework collision system to allow multiple collision boxes on one entity
+
+---------
+LOW PRIO
+---------
+- accurate fps cap and counter (nanosec precision)
+- keystates struct / array
+
+---------
+TO LEARN
+---------
+- VSC debugging
+
+-------
+OTHERS
+-------
+- 

@@ -18,4 +18,4 @@ typedef struct {
 Animation create_animation(char *path, float frame_interval);
 void start_animation(Animator *animator, Animation animation);
 void update_animator(Animator *animator, float delta_time);
-SDL_Rect play_animation(Animator animator);
+SDL_Rect get_animation_rect(Animator animator);

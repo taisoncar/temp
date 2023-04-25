@@ -6,13 +6,13 @@
 #include "setup.h"
 #include "enemy.h"
 #include "util.h"
+#include "camera.h"
 
 #define BULLET_SPEED 500.0f
-#define BULLET_DURATION 600
+#define BULLET_DURATION 600	//unused
 #define BULLET_HEALTH 1
 
 Bullet_list bullet_list;
-int score = 0;
 
 void init_bullet_list()
 {
@@ -42,11 +42,11 @@ void spawn_bullet(Entity source)
 	new_bullet->next = NULL;
 
 	//Setup bullet entity struct
-	new_bullet->entity.texture = g_texture[T_BULLET];
-    SDL_QueryTexture(new_bullet->entity.texture, NULL, NULL, &new_bullet->entity.w, &new_bullet->entity.h);
+	new_bullet->texture = g_texture[T_BULLET];
+    SDL_QueryTexture(new_bullet->texture, NULL, NULL, &new_bullet->entity.w, &new_bullet->entity.h);
 
-    new_bullet->entity.w = 5;
-    new_bullet->entity.h = 5;
+    //new_bullet->entity.w = 5;
+    //new_bullet->entity.h = 5;
     new_bullet->entity.pos.x = source.pos.x + (source.w / 2) - (new_bullet->entity.w / 2);
     new_bullet->entity.pos.y = source.pos.y;
     new_bullet->entity.vel.x = 0.0f;
@@ -61,7 +61,6 @@ void spawn_bullet(Entity source)
 
     new_bullet->entity.health = BULLET_HEALTH;
     new_bullet->entity.side = source.side;
-    new_bullet->entity.countdown = BULLET_DURATION;
 }
 
 void update_bullets(float delta_time)
@@ -71,7 +70,7 @@ void update_bullets(float delta_time)
 		update_entity(&i->entity, delta_time);
 		check_bullet_collision(&i->entity);
 
-		if ( (i->entity.pos.y < 0) || (i->entity.health <= 0) || (i->entity.countdown-- <= 0) ){
+		if ( (i->entity.pos.y < 0) || (i->entity.health <= 0) ){
 			if (i == bullet_list.tail) {
 				bullet_list.tail = prev;
 			}
@@ -86,14 +85,18 @@ void update_bullets(float delta_time)
 void draw_bullets()
 {
 	for (Bullet *i = bullet_list.head.next; i != NULL; i = i->next) {
-		draw_entity(i->entity);
+		SDL_Rect entity_rect = get_entity_rect(i->entity);
+		entity_rect = world_to_screen(entity_rect);
+    	SDL_RenderCopy(g_renderer, i->texture, NULL, &entity_rect);
+
 		if (i->entity.side == PLAYER_SIDE) {
 			SDL_Color green = {0x00, 0xFF, 0x00, 0xFF};
 			draw_rect(get_entity_rect(i->entity), &green);
 		}
 		else if (i->entity.side == ENEMY_SIDE) {
 			SDL_Color blue = {0xFC, 0x29, 0x47, 0xFF};
-			draw_rect(get_entity_rect(i->entity), &blue);
+			//draw_rect(get_entity_rect(i->entity), &blue);
+			draw_rect(world_to_screen(get_entity_rect(i->entity)), &blue);
 		}
 	}
 }
@@ -107,7 +110,9 @@ void check_bullet_collision(Entity* bullet)
 			{
 				bullet->health -= 1;
 				e->entity.health -= 1;
-				score++;
+				if (player) {
+					player->score++;
+				}
 			}
 		}
 	}

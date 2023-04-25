@@ -10,10 +10,10 @@ Animation create_animation(char *path, float frame_interval)
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
     animation.texture = load_texture(path);
 
-    int sprite_length;
-    SDL_QueryTexture(animation.texture, NULL, NULL, &sprite_length, &animation.wh);
+    int total_length;
+    SDL_QueryTexture(animation.texture, NULL, NULL, &total_length, &animation.wh);
 
-    animation.frame_count = sprite_length / animation.wh;
+    animation.frame_count = total_length / animation.wh;
     animation.frame_interval = frame_interval;
 
     return animation;
@@ -37,13 +37,12 @@ void update_animator(Animator *animator, float delta_time)
     animator->timer -= delta_time;
 }
 
-SDL_Rect play_animation(Animator animator)
+SDL_Rect get_animation_rect(Animator animator)
 {
     SDL_Rect src;
     src.x = animator.animation.wh * animator.frame_index;
     src.y = 0;
-    src.w = animator.animation.wh;
-    src.h = animator.animation.wh;
+    src.w = src.h = animator.animation.wh;
 
     return src;
 }

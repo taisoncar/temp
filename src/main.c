@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <SDL.h>
 #include "setup.h"
 #include "input.h"
 #include "entity.h"
@@ -9,6 +10,7 @@
 #include "message.h"
 #include "enemy.h"
 #include "util.h"
+#include "camera.h"
 
 void init();
 void update(float delta_time);
@@ -57,6 +59,7 @@ void update(float delta_time)
 		spawn_enemy(); 
 		cooldown = 100;
 	}
+	update_camera();
 
 	update_bullets(delta_time);
 	update_player(delta_time);
@@ -66,14 +69,24 @@ void update(float delta_time)
 
 void draw()
 {
-	SDL_SetRenderDrawColor(g_renderer, 0x3C, 0x48, 0x6B, 255);
+	SDL_SetRenderDrawColor(g_renderer, 0x00, 0x00, 0x00, 255);
 	SDL_RenderClear(g_renderer);
 	//////////////////////////
-	
+	//SDL_RenderSetScale(g_renderer, 5.0f, 5.0f);
 	draw_bullets();
 	draw_enemies();
 	draw_player();
 	draw_messages();
+
+	SDL_Rect bound = {
+		0, 
+		0,
+		SCREEN_WIDTH,
+		SCREEN_HEIGHT
+	};
+	SDL_Color blue = {0xFC, 0x29, 0x47, 0xFF};
+	draw_rect(world_to_screen(bound), &blue);
+
 
 	///////////////////////////
 	SDL_RenderPresent(g_renderer);

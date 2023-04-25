@@ -8,6 +8,7 @@
 #include "input.h"
 #include "projectile.h"
 #include "animator.h"
+#include "camera.h"
 
 #define PLAYER_SPEED 400.0f
 #define PLAYER_HEALTH 100
@@ -15,8 +16,8 @@
 
 Player* player = NULL;
 
-void kill_player();
 void update_player_animation();
+SDL_Rect get_player_hitbox();
 
 void spawn_player()
 {
@@ -30,8 +31,8 @@ void spawn_player()
     start_animation(&player->animator, player->animation_list[PLAYER_IDLE]);
 
     //Setup player entity struct
-    player->entity.w = player->animation_list->wh * 3;
-    player->entity.h = player->animation_list->wh * 3;
+    player->entity.w = player->animation_list->wh;
+    player->entity.h = player->animation_list->wh;
 
     player->entity.pos.x = (SCREEN_WIDTH / 2) - (player->entity.w / 2); 
     player->entity.pos.y = SCREEN_HEIGHT - player->entity.h;
@@ -42,17 +43,27 @@ void spawn_player()
 
     player->entity.health = PLAYER_HEALTH;
     player->entity.side = PLAYER_SIDE;
-    player->entity.countdown = 0;
+    player->reload = 0;
+
+    //Setup player hitbox
+    player->hitbox = (SDL_Rect){
+        player->animator.animation.wh / 4,
+        0,
+        player->animator.animation.wh / 2,
+        player->animator.animation.wh,
+    };
 
     //Setup player properties
     player->is_fire = false;
     player->facing_right = true;
+    player->score = 0;
 }
 
 void kill_player()
 {
     free(player);
     player = NULL;
+    printf("freed player\n");
 }
 
 void update_player(float delta_time)
@@ -66,9 +77,9 @@ void update_player(float delta_time)
         update_animator(&player->animator, delta_time);
 
         //Check if firing bullet
-        if (player->is_fire && (player->entity.countdown-- <= 0)) {
+        if (player->is_fire && (player->reload-- <= 0)) {
             spawn_bullet(player->entity);
-		    player->entity.countdown = PLAYER_RELOAD;
+		    player->reload = PLAYER_RELOAD;
         }
 
         //Check if out of bound
@@ -104,20 +115,47 @@ void update_player_animation()
     }
 }
 
-
 void draw_player()
 {
     if (player) {
-        SDL_Color green = {0x00, 0xFF, 0x00, 0xFF};
-        draw_rect(get_entity_rect(player->entity), &green); 
+        SDL_Rect src = get_animation_rect(player->animator);
+        SDL_Rect dest = {
+            player->entity.pos.x,
+            player->entity.pos.y,
+            src.w,
+            src.h
+        };
+        SDL_Rect screen_dest = world_to_screen(dest);
+        SDL_RenderCopyEx(
+            g_renderer, 
+            player->animator.animation.texture, 
+            &src, 
+            &screen_dest, 
+            0, 
+            NULL, 
+            player->facing_right ? SDL_FLIP_NONE : SDL_FLIP_HORIZONTAL
+        );
 
-        SDL_Rect src = play_animation(player->animator);
-        SDL_Rect dest = get_entity_rect(player->entity);
-        if (player->facing_right) {
-            SDL_RenderCopy(g_renderer, player->animator.animation.texture, &src, &dest);
-        }
-        else {
-            SDL_RenderCopyEx(g_renderer, player->animator.animation.texture, &src, &dest, 0, NULL, SDL_FLIP_HORIZONTAL);
-        }
+        //Draw player display box
+        SDL_Color green_color = {0x00, 0xFF, 0x00, 0xFF};
+        draw_rect(screen_dest, &green_color); 
+
+        //Draw player collision box
+        SDL_Color blue_color = {0x00, 0x00, 0xFF, 0xFF};
+        //draw_rect(get_player_hitbox(), &blue_color);
+        draw_rect(world_to_screen(get_player_hitbox()), &blue_color);  
     }
+}
+
+
+SDL_Rect get_player_hitbox()
+{
+    SDL_Rect rect = {
+        player->entity.pos.x + player->hitbox.x,
+        player->entity.pos.y + player->hitbox.y,
+        player->hitbox.w,
+        player->hitbox.h
+    };
+
+    return rect;
 }

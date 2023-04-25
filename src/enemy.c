@@ -7,6 +7,7 @@
 #include "util.h"
 #include "projectile.h"
 #include "player.h"
+#include "camera.h"
 
 #define ENEMY_SPEED 100.0f
 #define ENEMY_RELOAD 60
@@ -35,19 +36,20 @@ void destroy_enemy_list()
 
 void spawn_enemy()
 {
-
 	Enemy *new_enemy = malloc(sizeof(Enemy));
 	assert(new_enemy);
 
 	enemy_list.tail = enemy_list.tail->next = new_enemy;
 	new_enemy->next = NULL;
 
-	//Setup enemy entity struct
-	new_enemy->entity.texture = g_texture[T_ENEMY];
+	//Setup animator and animation_list
+    new_enemy->animation_list[ENEMY_WALK] = create_animation("../res/img/GhostWalk.png", 0.1f);
+    new_enemy->animation_list[ENEMY_DIE] = create_animation("../res/img/GhostDie.png", 0.1f);
+    start_animation(&new_enemy->animator, new_enemy->animation_list[ENEMY_WALK]);
 
-    SDL_QueryTexture(new_enemy->entity.texture, NULL, NULL, &new_enemy->entity.w, &new_enemy->entity.h);
-    new_enemy->entity.w /= 2;
-    new_enemy->entity.h /= 2;
+	//Setup enemy entity struct
+    new_enemy->entity.w = new_enemy->animation_list->wh;
+    new_enemy->entity.h = new_enemy->animation_list->wh;
 
     new_enemy->entity.pos.x = rand_range(0, SCREEN_WIDTH - new_enemy->entity.w);
     new_enemy->entity.pos.y = 0;
@@ -58,7 +60,7 @@ void spawn_enemy()
 
     new_enemy->entity.health = ENEMY_HEALTH;
     new_enemy->entity.side = ENEMY_SIDE;
-    new_enemy->entity.countdown = 0;
+    new_enemy->reload = 0;
 }
 
 void update_enemies(float delta_time)
@@ -66,11 +68,12 @@ void update_enemies(float delta_time)
 	Enemy *prev = &enemy_list.head;
 	for (Enemy *i = enemy_list.head.next; i != NULL; i = i->next) {
 		update_entity(&i->entity, delta_time);
+		update_animator(&i->animator, delta_time);
 		
 		//Fire bullet if not reloading
-		if ((i->entity.countdown-- <= 0) && player) {
+		if ((i->reload-- <= 0) && player) {
 			spawn_bullet(i->entity);
-			i->entity.countdown = ENEMY_RELOAD;
+			i->reload = ENEMY_RELOAD;
 		}
 
 		//Delete enemy if out of bound / killed
@@ -89,8 +92,25 @@ void update_enemies(float delta_time)
 void draw_enemies()
 {
 	for (Enemy *i = enemy_list.head.next; i != NULL; i = i->next) {
-		draw_entity(i->entity);
+		SDL_Rect src = get_animation_rect(i->animator);
+        SDL_Rect dest = {
+            i->entity.pos.x,
+            i->entity.pos.y,
+            i->animator.animation.wh,
+            i->animator.animation.wh
+        };
+		SDL_Rect screen_dest = world_to_screen(dest);
+        SDL_RenderCopyEx(
+            g_renderer, 
+            i->animator.animation.texture, 
+            &src, 
+            &screen_dest, 
+            0, 
+            NULL, 
+            SDL_FLIP_NONE
+        );
 		SDL_Color blue = {0xFC, 0x29, 0x47, 0xFF};
-		draw_rect(get_entity_rect(i->entity), &blue);
+		//draw_rect(get_entity_rect(i->entity), &blue);
+		draw_rect(world_to_screen(get_entity_rect(i->entity)), &blue);
 	}
 }
