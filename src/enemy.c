@@ -99,7 +99,7 @@ void draw_enemies()
             i->animator.animation.wh,
             i->animator.animation.wh
         };
-		SDL_Rect screen_dest = world_to_screen(dest);
+		SDL_Rect screen_dest = world_to_screen(i->entity.pos, src.w, src.h);
         SDL_RenderCopyEx(
             g_renderer, 
             i->animator.animation.texture, 
@@ -111,6 +111,6 @@ void draw_enemies()
         );
 		SDL_Color blue = {0xFC, 0x29, 0x47, 0xFF};
 		//draw_rect(get_entity_rect(i->entity), &blue);
-		draw_rect(world_to_screen(get_entity_rect(i->entity)), &blue);
+		//draw_rect(world_to_screen(get_entity_rect(i->entity)), &blue);
 	}
 }

@@ -7,6 +7,7 @@
 #include "setup.h"
 #include "util.h"
 #include "enemy.h"
+#include "camera.h"
 
 void get_key_down(SDL_KeyboardEvent* event);
 void get_key_up(SDL_KeyboardEvent* event);
@@ -68,6 +69,15 @@ void get_key_down(SDL_KeyboardEvent* event)
 			case SDL_SCANCODE_Q:
 				destroy_bullet_list();
 				destroy_enemy_list();
+				break;
+
+			case SDL_SCANCODE_U:
+				scale += 1.0f;
+				break;
+			case SDL_SCANCODE_I:
+				if (scale > 1.0f) {
+					scale -= 1.0f;
+				}
 				break;
 			
 		}

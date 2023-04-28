@@ -86,17 +86,18 @@ void draw_bullets()
 {
 	for (Bullet *i = bullet_list.head.next; i != NULL; i = i->next) {
 		SDL_Rect entity_rect = get_entity_rect(i->entity);
-		entity_rect = world_to_screen(entity_rect);
+		//entity_rect = world_to_screen(entity_rect);
     	SDL_RenderCopy(g_renderer, i->texture, NULL, &entity_rect);
 
 		if (i->entity.side == PLAYER_SIDE) {
 			SDL_Color green = {0x00, 0xFF, 0x00, 0xFF};
-			draw_rect(get_entity_rect(i->entity), &green);
+			//draw_rect(get_entity_rect(i->entity), &green);
+			//draw_rect(world_to_screen(get_entity_rect(i->entity)), &green);
 		}
 		else if (i->entity.side == ENEMY_SIDE) {
 			SDL_Color blue = {0xFC, 0x29, 0x47, 0xFF};
 			//draw_rect(get_entity_rect(i->entity), &blue);
-			draw_rect(world_to_screen(get_entity_rect(i->entity)), &blue);
+			//draw_rect(world_to_screen(get_entity_rect(i->entity)), &blue);
 		}
 	}
 }

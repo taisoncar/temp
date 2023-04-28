@@ -8,13 +8,13 @@
 Vector2 offset = { 0.0f, 0.0f };
 float scale = 1.0f;
 
-SDL_Rect world_to_screen(SDL_Rect world_pos)
+SDL_Rect world_to_screen(Vector2 world_pos, int w, int h)
 {
     SDL_Rect screen_pos;
-    screen_pos.x = (world_pos.x - offset.x) * scale;
-    screen_pos.y = (world_pos.y - offset.y) * scale;
-    screen_pos.w = world_pos.w * scale;
-    screen_pos.h = world_pos.h * scale;
+    screen_pos.x = (int)((world_pos.x - offset.x) * scale);
+    screen_pos.y = (int)((world_pos.y - offset.y) * scale);
+    screen_pos.w = w * scale;
+    screen_pos.h = h * scale;
 
     return screen_pos;
 }
@@ -43,10 +43,8 @@ void update_camera()
 {
     if (player) {
         Vector2 center;
-        center.x = SCREEN_WIDTH / 2;
-        center.y = SCREEN_HEIGHT / 2;
-        offset = calc_slope(center, player->entity.pos);
+        center.x = (float)SCREEN_WIDTH / 2;
+        center.y = (float)SCREEN_HEIGHT / 2;
+        offset = calc_slope(scale_vec(center, 1 / scale), player->entity.pos);
     }
-    printf("offset x: %f\n", offset.x);
-    printf("offset y: %f\n\n", offset.y);
 }

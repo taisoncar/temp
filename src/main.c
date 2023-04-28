@@ -85,7 +85,7 @@ void draw()
 		SCREEN_HEIGHT
 	};
 	SDL_Color blue = {0xFC, 0x29, 0x47, 0xFF};
-	draw_rect(world_to_screen(bound), &blue);
+	//draw_rect(world_to_screen(bound), &blue);
 
 
 	///////////////////////////

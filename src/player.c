@@ -34,8 +34,8 @@ void spawn_player()
     player->entity.w = player->animation_list->wh;
     player->entity.h = player->animation_list->wh;
 
-    player->entity.pos.x = (SCREEN_WIDTH / 2) - (player->entity.w / 2); 
-    player->entity.pos.y = SCREEN_HEIGHT - player->entity.h;
+    player->entity.pos.x = (SCREEN_WIDTH / 2);
+    player->entity.pos.y = (SCREEN_HEIGHT / 2);
 
     player->entity.vel.x = 0.0f;
     player->entity.vel.y = 0.0f;
@@ -83,7 +83,7 @@ void update_player(float delta_time)
         }
 
         //Check if out of bound
-        if (player->entity.pos.x < 0) {
+        /* if (player->entity.pos.x < 0) {
             player->entity.pos.x = 0;
         }
         else if (player->entity.pos.x + player->entity.w > SCREEN_WIDTH) {
@@ -94,7 +94,7 @@ void update_player(float delta_time)
         }
         else if (player->entity.pos.y + player->entity.h > SCREEN_HEIGHT) {
             player->entity.pos.y = SCREEN_HEIGHT - player->entity.h;
-        }
+        } */
     }
 }
 
@@ -119,13 +119,7 @@ void draw_player()
 {
     if (player) {
         SDL_Rect src = get_animation_rect(player->animator);
-        SDL_Rect dest = {
-            player->entity.pos.x,
-            player->entity.pos.y,
-            src.w,
-            src.h
-        };
-        SDL_Rect screen_dest = world_to_screen(dest);
+        SDL_Rect screen_dest = world_to_screen(player->entity.pos, src.w, src.h);
         SDL_RenderCopyEx(
             g_renderer, 
             player->animator.animation.texture, 
@@ -143,7 +137,7 @@ void draw_player()
         //Draw player collision box
         SDL_Color blue_color = {0x00, 0x00, 0xFF, 0xFF};
         //draw_rect(get_player_hitbox(), &blue_color);
-        draw_rect(world_to_screen(get_player_hitbox()), &blue_color);  
+        //draw_rect(world_to_screen(get_player_hitbox()), &blue_color);  
     }
 }
 
